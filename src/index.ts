@@ -5,10 +5,10 @@ import {
   INotebookTracker
 } from '@jupyterlab/notebook';
 import { Message } from '@phosphor/messaging';
-import { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
+import { Cell, CodeCell } from '@jupyterlab/cells';
 import { Widget } from '@phosphor/widgets';
 import { PanelLayout } from '@phosphor/widgets';
-import { IObservableString, IObservableList } from '@jupyterlab/observables';
+import { IObservableString } from '@jupyterlab/observables';
 import 'antd/dist/antd.css';
 import '../style/index.css';
 import MyContentWidget, { MFE_SPLIT_KEY, MFE_VIEW_ID } from './MyContentWidget';
