@@ -29,17 +29,6 @@
     "clean": "rimraf lib",
     "watch": "tsc -w"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,json,css,md,ts,tsx}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
   "dependencies": {
     "@jupyterlab/application": "^1.0.0-alpha.6",
     "@jupyterlab/apputils": "^1.0.0-alpha.6",
