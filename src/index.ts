@@ -75,7 +75,7 @@ class MyTool extends NotebookTools.Tool {
       layout.addWidget(myWidget);
     }
     const innerValue: string[] = cell.model.value.text
-      .replace(/\s/g, '')
+      .replace(/(^\s*)|(\*$)/g, '')
       .split(MFE_SPLIT_KEY);
     myWidget.updateInnerValue(innerValue);
   }

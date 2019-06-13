@@ -7,7 +7,7 @@ import { ToolbarButton } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IDisposable, DisposableDelegate } from '@phosphor/disposable';
 import { MFE_SPLIT_KEY } from './MyContentWidget';
-import { RawCell } from '@jupyterlab/cells';
+import { Dialog, showDialog } from '@jupyterlab/apputils';
 /**
  * A notebook widget extension that adds a button to the toolbar.
  */
@@ -25,15 +25,26 @@ class ButtonExtension
     panel: NotebookPanel,
     context: DocumentRegistry.IContext<INotebookModel>
   ): IDisposable {
-    console.log('>>>> createNew');
-    const helpButton = () => {
-      let icon = 'lightbulb-o';
-      let handleClick = () => {
+    const choiceButton = () => {
+      const icon = 'lightbulb-o';
+      const handleClick = () => {
         const activeCell = this.notebookTracker.activeCell;
-        console.log(activeCell);
-        if (activeCell instanceof RawCell) {
-          const isMfeCell = activeCell.model.value.text.includes(MFE_SPLIT_KEY);
-          if (!isMfeCell) {
+        const valueText = activeCell.model.value.text;
+        const isMfeCell = valueText.includes(MFE_SPLIT_KEY);
+        if (!isMfeCell) {
+          if (valueText.trim() !== '') {
+            showDialog({
+              title: `当前cell中还有内容，确定覆盖吗？`,
+              buttons: [
+                Dialog.cancelButton({ label: '取消' }),
+                Dialog.warnButton({ label: '确定' })
+              ]
+            }).then(result => {
+              if (result.button.accept) {
+                activeCell.model.value.text = MFE_SPLIT_KEY;
+              }
+            });
+          } else {
             activeCell.model.value.text = MFE_SPLIT_KEY;
           }
         }
@@ -48,10 +59,11 @@ class ButtonExtension
       });
     };
 
-    panel.toolbar.insertItem(10, 'helpButton', helpButton());
+    const choiceBtn = choiceButton();
+    panel.toolbar.insertItem(10, 'helpButton', choiceBtn);
 
     return new DisposableDelegate(() => {
-      helpButton().dispose();
+      choiceBtn.dispose();
     });
   }
 }

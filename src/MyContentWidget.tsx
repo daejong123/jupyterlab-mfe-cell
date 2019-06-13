@@ -27,11 +27,13 @@ export default class MyContentWidget extends Widget {
   }
 
   // 修改内容
-  onChangeContent(title: string, mfeObj: MfeObj) {
+  onChangeContent(title: string, mfeObj: MfeObj, index: number) {
     console.log(title, mfeObj);
-    const targetMfeObjIndex = this.mfeObjs.findIndex(
-      item => item.title === title
-    );
+    const targetMfeObjIndex = this.mfeObjs
+      .filter(item => item)
+      .findIndex((item, i) => {
+        return item.title === title && index === i;
+      });
     if (targetMfeObjIndex !== -1) {
       this.mfeObjs[targetMfeObjIndex] = mfeObj;
     }
@@ -51,9 +53,9 @@ export default class MyContentWidget extends Widget {
   }
 
   // 删除选择题
-  deleteChoiceItem(title: string) {
+  deleteChoiceItem(title: string, index: number) {
     const targetMfeObjIndex = this.mfeObjs.findIndex(
-      item => item.title === title
+      (item, i) => item.title === title && index === i
     );
     if (targetMfeObjIndex !== -1) {
       this.mfeObjs.splice(targetMfeObjIndex, 1);
@@ -71,10 +73,8 @@ export default class MyContentWidget extends Widget {
       .map((item: string, index: number) => {
         try {
           const mfeObj: MfeObj = JSON.parse(`${item.replace(/'/g, '"')}`);
-          if (['choice', 'judge'].find(type => type === mfeObj.type)) {
+          if (mfeObj) {
             return mfeObj;
-          } else {
-            console.log('type不等于choice、judge');
           }
         } catch (error) {
           console.log('解析错误!', item);

@@ -1,26 +1,31 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import ChoiceComponent, { MfeObj } from './components/ChoiceComponent';
+import ChoiceComponent, {
+  MfeObj,
+  ChoiceType
+} from './components/ChoiceComponent';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import '../style/index.css';
 
 interface IProps {
   mfeObjs: MfeObj[];
-  onChangeContent: (title: string, mfeObj: MfeObj) => void;
+  onChangeContent: (title: string, mfeObj: MfeObj, index: number) => void;
   addChoiceItem: (mfeObj: MfeObj) => void;
-  deleteChoiceItem: (title: string) => void;
+  deleteChoiceItem: (title: string, index: number) => void;
 }
 
 class MfeComponent extends React.Component<IProps, any> {
-  constructor(props: any) {
+  constructor(props: IProps) {
     super(props);
     this.state = {
       canEdit: false
     };
-    this.handleClick = this.handleClick.bind(this);
+    this.handleEditClick = this.handleEditClick.bind(this);
     this.addChoice = this.addChoice.bind(this);
     this.addJudegeChoice = this.addJudegeChoice.bind(this);
   }
 
-  handleClick(e: any) {
+  handleEditClick(e: any) {
     this.setState((state: any, props: any) => {
       let result = true;
       if (state.canEdit === true) {
@@ -32,10 +37,11 @@ class MfeComponent extends React.Component<IProps, any> {
     });
   }
 
+  // 添加选择题
   addChoice(e: any) {
     let mfeObj: MfeObj = {
-      type: 'choice',
-      option: [{ A: '' }, { B: '' }, { C: '' }, { D: '' }],
+      type: ChoiceType.choice,
+      option: ['', '', '', ''],
       title: '',
       explain: '',
       answer: 'A'
@@ -43,10 +49,11 @@ class MfeComponent extends React.Component<IProps, any> {
     this.props.addChoiceItem(mfeObj);
   }
 
+  // 添加判断题
   addJudegeChoice(e: any) {
     let mfeObj: MfeObj = {
-      type: 'judge',
-      option: [{ 对: '' }, { 错: '' }],
+      type: ChoiceType.judge,
+      option: ['', ''],
       title: '',
       explain: '',
       answer: '对'
@@ -60,35 +67,48 @@ class MfeComponent extends React.Component<IProps, any> {
     console.log('重新获取到json内容并渲染：', mfeObjs);
     return (
       <div>
-        <h2>选择题</h2>
-        <Button onClick={this.handleClick}>
-          {canEdit === true ? '预览' : '编辑'}
-        </Button>
-        {canEdit === true && (
-          <React.Fragment>
-            <Button
-              type="primary"
-              style={{ margin: '0 5px' }}
-              onClick={this.addChoice}
-            >
-              添加选择题
-            </Button>
-            <Button onClick={this.addJudegeChoice}>添加判断题</Button>
-          </React.Fragment>
-        )}
-        {mfeObjs.map((item: MfeObj, index: number) => {
-          if (item && ['choice', 'judge'].find(type => type === item.type)) {
-            return (
-              <ChoiceComponent
-                {...item}
-                deleteChoiceItem={deleteChoiceItem}
-                onChangeContent={onChangeContent}
-                canEdit={canEdit}
-                key={item.answer + index}
-              />
-            );
-          }
-        })}
+        <h1 className="vertical-horizon-center-container">选择题</h1>
+        <TransitionGroup>
+          {mfeObjs
+            .filter(item => item)
+            .map((item: MfeObj, index: number) => (
+              <CSSTransition
+                classNames="fade"
+                timeout={500}
+                appear={true}
+                unmountOnExit
+                key={index}
+              >
+                <ChoiceComponent
+                  {...item}
+                  deleteChoiceItem={deleteChoiceItem}
+                  onChangeContent={onChangeContent}
+                  canEdit={canEdit}
+                  index={index}
+                />
+              </CSSTransition>
+            ))}
+        </TransitionGroup>
+        <div
+          className="vertical-horizon-center-container"
+          style={{ marginTop: '50px' }}
+        >
+          <Button onClick={this.handleEditClick}>
+            {canEdit === true ? '预览' : '编辑'}
+          </Button>
+          {canEdit === true && (
+            <React.Fragment>
+              <Button
+                type="primary"
+                style={{ margin: '0 5px' }}
+                onClick={this.addChoice}
+              >
+                添加选择题
+              </Button>
+              <Button onClick={this.addJudegeChoice}>添加判断题</Button>
+            </React.Fragment>
+          )}
+        </div>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 {
-  "name": "mfe-cell",
+  "name": "mfe-choice-cell",
   "version": "1.1.1",
-  "description": "Extension for adding descriptive tags to notebook cells (Beta)",
+  "description": "a choice jupyterlab extension powered by mfe",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -52,12 +52,14 @@
     "antd": "^3.19.2",
     "react": "~16.8.4",
     "react-dom": "~16.8.4",
+    "react-transition-group": "^4.1.1",
     "typestyle": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "~8.0.47",
     "@types/react": "~16.8.8",
     "@types/react-dom": "~16.8.2",
+    "@types/react-transition-group": "^2.9.2",
     "husky": "^1.0.0-rc.13",
     "lint-staged": "^7.2.0",
     "prettier": "^1.13.7",
